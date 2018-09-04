@@ -8,6 +8,7 @@ public class Plant {
 	public static void main(String[] args) {
 		// Startup a single plant - you put code here
 		
+		
 		// plant processes Oranges until the time is up
 		
 		// Summarize the results at the end
@@ -17,5 +18,8 @@ public class Plant {
 	}
 
 	// you write the plant functions you need
+	public Plant() {
+		
+	}
 
 }
