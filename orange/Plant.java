@@ -17,14 +17,7 @@ public class Plant extends Orange{
 		int processedOrange = 0;
 		int unProcessedOrange = 0;
 		
-		Timer timeThoseOranges = new Timer("threadOne");
-		TimerTask taskTimerForOranges = new TimerTask() {
-			public void run() {
-				plant.timerDone = true;
-			}
-		};
-		timeThoseOranges.schedule(taskTimerForOranges, PROCESSING_TIME);
-		
+		timePlant(plant);
 		
 		while(!plant.timerDone) {
 			plant.processOranges();
@@ -63,5 +56,16 @@ public class Plant extends Orange{
 			}
 		}
 	}
-
+	
+	private static void timePlant(Plant plant) {
+		Timer timeThoseOranges = new Timer("threadOne");
+		TimerTask taskTimerForOranges = new TimerTask() {
+			public void run() {
+				plant.timerDone = true;
+			}
+		};
+		timeThoseOranges.schedule(taskTimerForOranges, PROCESSING_TIME);
+		
+	}
+	
 }
