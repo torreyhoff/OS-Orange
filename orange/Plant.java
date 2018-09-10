@@ -3,31 +3,23 @@ package orange;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Plant extends Orange{
+public class Plant extends Orange implements Runnable {
 	// How long do we want to run the juice processing
 	public static final long PROCESSING_TIME = 5 * 1000;
 	public static final int ORANGES_PER_BOTTLE = 4;
-	public boolean timerDone;
+	public static final int WORKERS = 5;
+	public boolean timerDone = false;
+	private static int processedOrange = 0;
+	private static int unProcessedOrange = 0;
 	 
 	public static void main(String[] args) {
 		// Startup a single plant - you put code here
 		Plant plant = new Plant();
 		
 		// plant processes Oranges until the time is up
-		int processedOrange = 0;
-		int unProcessedOrange = 0;
 		
 		timePlant(plant);
-		
-		while(!plant.timerDone) {
-			plant.processOranges();
-			if(plant.timerDone) {
-				unProcessedOrange++;
-				break;
-			} else {
-				processedOrange++;
-			}
-		}
+		plant.Worker();
 		
 		// Summarize the results at the end
 		// print total oranges started, processed, number of bottles finished and oranges
@@ -44,16 +36,16 @@ public class Plant extends Orange{
 	public Plant() {
 		System.out.println("Creating Orange Plantation.");
 		this.timerDone = false;
+		
 	}
 	
 	private void processOranges() {
 		Orange currentOrange = new Orange();
-		while(true) {
-			try {
-				currentOrange.runProcess();
-			} catch(IllegalStateException e) {
-				break;
-			}
+		if(currentOrange.getState() == Orange.State.Processed) {
+			return;
+		}
+		else {
+			currentOrange.runProcess();
 		}
 	}
 	
@@ -68,4 +60,21 @@ public class Plant extends Orange{
 		
 	}
 	
+	public void Worker() {
+		Thread workerThread = new Thread(this);
+		workerThread.start();
+	}
+	
+	@Override
+	public void run() {
+		while(!this.timerDone) {
+			this.processOranges();
+			if(this.timerDone) {
+				unProcessedOrange++;
+				break;
+			} else {
+				processedOrange++;
+			}
+		}
+	}
 }
