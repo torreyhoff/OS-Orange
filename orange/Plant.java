@@ -11,11 +11,11 @@ public class Plant extends Orange implements Runnable {
 	public static int badOranges = 0;
 	public static long startTime = System.currentTimeMillis();
 	
-	private final String name;
-	private final Thread thread;
-	 
+	private String name;
+	private Thread thread;
+	
 	public static void main(String[] args) {
-		// Startup a single plant - you put code here
+		
 		Plant[] plant = new Plant[NUM_THREADS];
 		String nameOfOrange = "Orange/Thread ";
 		for (int i = 0; i < NUM_THREADS; i++){
@@ -38,9 +38,12 @@ public class Plant extends Orange implements Runnable {
 
 	}
 
-	// you write the plant functions you need
 	public Plant(String name) {
 		System.out.println("Creating Orange Plantation.");
+		
+	}
+	
+	private void worker(String name) {
 		this.name = name;
 		thread = new Thread(this);
 		thread.start();
