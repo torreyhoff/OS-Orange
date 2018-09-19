@@ -12,6 +12,7 @@ public class Plant extends Orange implements Runnable {
 	public static long startTime = System.currentTimeMillis();
 	
 	private Thread thread;
+	private Worker[] workers = new Worker[WORKERS];
 	
 	public static void main(String[] args) {
 		
@@ -19,16 +20,24 @@ public class Plant extends Orange implements Runnable {
 		String nameOfOrange = "Plant ";
 		for (int i = 0; i < NUM_THREADS; i++){
 			plant[i]= new Plant(nameOfOrange + i); 
-		}
-		for (int j = 0; j < NUM_THREADS; j++) {
-			try {
-				System.out.println("Plant " + j + " is going to close");
-				plant[j].getThread().join();
-				System.out.println(j + " closed");
-			} catch (InterruptedException ignored) {}
+			plant[i].startPlant();
 		}
 		
-		if (!orangeGoneBad) {
+		delay(PROCESSING_TIME, "Plant Malfunction");
+		
+		
+		for (Plant p : plant) {
+			p.stopPlant();
+		}
+//		for (int j = 0; j < NUM_THREADS; j++) {
+//			try {
+//				System.out.println("Plant " + j + " is going to close");
+//				plant[j].getThread().join();
+//				System.out.println(j + " closed");
+//			} catch (InterruptedException ignored) {}
+//		}
+		
+		if (!Worker.getOrangesGoneBad()) {
 			System.out.printf("\n%d Oranges were processed\n%d Bottles were made\n%d Oranges were wasted\n", totalCounter,
 					totalCounter / ORANGES_PER_BOTTLE, totalCounter % ORANGES_PER_BOTTLE);
 		} else {
@@ -40,23 +49,46 @@ public class Plant extends Orange implements Runnable {
 
 	public Plant(String name) {
 		System.out.println("Creating Orange Plantation " + name);
+		for (int i = 0; i < WORKERS; i++){
+			workers[i]= new Worker(); 
+		}
 		thread = new Thread();
-		run();
+		//run();
+	}
+	
+	
+	public void startPlant() {
+		thread.start();
+	}
+	
+	public void stopPlant() {
+		for (Worker w : workers) {
+			w.stopWork();
+		}
 	}
 	
 	public Thread getThread() {
 		return thread;
 	}
+
+	private static void delay(long time, String errMsg) {
+		long sleepTime = Math.max(1, time);
+		try {
+			Thread.sleep(sleepTime);
+		} catch (InterruptedException e) {
+			System.err.println(errMsg);
+		}
+	}
 	
 	@Override
 	public void run() {
-		Worker[] workers = new Worker[WORKERS];
-		for (int i = 0; i < WORKERS; i++){
-			workers[i]= new Worker(); 
+		for (Worker w : workers) {
+			w.startWork();
 		}
 		for (int j = 0; j < NUM_THREADS; j++) {
 			try {
 				System.out.println("Worker " + j + " is going home");
+				System.out.println(workers[j].getCounter());
 				totalCounter += workers[j].getCounter();
 				totalBadOranges += workers[j].getBadOranges();
 				workers[j].getThread().join();
