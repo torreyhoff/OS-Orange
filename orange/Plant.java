@@ -25,7 +25,6 @@ public class Plant extends Orange implements Runnable {
 		
 		delay(PROCESSING_TIME, "Plant Malfunction");
 		
-		
 		for (Plant p : plant) {
 			p.stopPlant();
 		}
