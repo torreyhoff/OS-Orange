@@ -9,13 +9,11 @@ public class Worker extends Thread{
 
 	public Worker(String name) {
 		timeToWork = true;
-		System.out.println("worker ready to run");
 	}
 	
 	public void startWork() {
 		timeToWork = true;
-		System.out.println("starting worker thread");
-		run();
+		start();
 	}
 	
 	public void stopWork() {
@@ -39,7 +37,7 @@ public class Worker extends Thread{
 	}
 	
 	private void processOranges(Orange currentOrange) {
-		while (currentOrange.getState() != Orange.State.Processed && timeToWork) { //(System.currentTimeMillis() - Plant.startTime) < Plant.PROCESSING_TIME) {
+		while (currentOrange.getState() != Orange.State.Processed && timeToWork) {
 			currentOrange.runProcess();
 		}
 		if (currentOrange.getState() != Orange.State.Processed){
@@ -50,15 +48,12 @@ public class Worker extends Thread{
 	
 	@Override
 	public void run() {
-		System.out.println("Worker is Working: " + currentThread().getName());
-		while ( timeToWork ) {//(System.currentTimeMillis() - Plant.startTime) < Plant.PROCESSING_TIME) {
+		while ( timeToWork ) {
 			Orange o = new Orange();
 			processOranges(o);
 			if (!Plant.orangeGoneBad) {
-				System.out.println(counter);
 				counter++;
 			}
 		}
 	}
-
 }
