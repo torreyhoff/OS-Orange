@@ -1,9 +1,9 @@
 package orange;
 
-public class Plant extends Orange implements Runnable {
+public class Plant implements Runnable {
 
 	public static final int NUM_THREADS = 5;
-	public static final long PROCESSING_TIME = 5 * 1000;
+	public static final long PROCESSING_TIME = 1 * 1000;
 	public static final int ORANGES_PER_BOTTLE = 4;
 	public static final int WORKERS = 5;
 	public static boolean orangeGoneBad = false;
@@ -11,7 +11,6 @@ public class Plant extends Orange implements Runnable {
 	public static int totalBadOranges = 0;
 	public static long startTime = System.currentTimeMillis();
 	
-	private Thread thread;
 	private Worker[] workers = new Worker[WORKERS];
 	
 	public static void main(String[] args) {
@@ -20,12 +19,17 @@ public class Plant extends Orange implements Runnable {
 		String nameOfOrange = "Plant ";
 		for (int i = 0; i < NUM_THREADS; i++){
 			plant[i]= new Plant(nameOfOrange + i); 
-			plant[i].startPlant();
+			//plant[i].startPlant();
+		}
+		for (Plant p : plant) {
+			p.startPlant();
 		}
 		
 		delay(PROCESSING_TIME, "Plant Malfunction");
+		System.out.println("Delay Done");
 		
 		for (Plant p : plant) {
+			System.out.println("Stopping Plant");
 			p.stopPlant();
 		}
 //		for (int j = 0; j < NUM_THREADS; j++) {
@@ -49,15 +53,17 @@ public class Plant extends Orange implements Runnable {
 	public Plant(String name) {
 		System.out.println("Creating Orange Plantation " + name);
 		for (int i = 0; i < WORKERS; i++){
-			workers[i]= new Worker(); 
+			workers[i]= new Worker("Worker " + i);
 		}
-		thread = new Thread();
+		System.out.println("Started Thread: " + this);
 		//run();
 	}
 	
-	
 	public void startPlant() {
-		thread.start();
+		System.out.println("Starting Up Plant");
+		System.out.println("Plant Thread?: "+this);
+		run();
+		System.out.println("Plant Started");
 	}
 	
 	public void stopPlant() {
@@ -66,8 +72,8 @@ public class Plant extends Orange implements Runnable {
 		}
 	}
 	
-	public Thread getThread() {
-		return thread;
+	public Plant getThread() {
+		return this;
 	}
 
 	private static void delay(long time, String errMsg) {
@@ -82,6 +88,7 @@ public class Plant extends Orange implements Runnable {
 	@Override
 	public void run() {
 		for (Worker w : workers) {
+			System.out.println("Starting Workers");
 			w.startWork();
 		}
 		for (int j = 0; j < NUM_THREADS; j++) {

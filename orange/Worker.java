@@ -1,22 +1,21 @@
 package orange;
 
-public class Worker implements Runnable {
+public class Worker extends Thread{
 
-	private final Thread thread;
 	private int badOranges = 0;
 	private int counter = 0;
 	private static boolean orangeGoneBad = false;
 	private boolean timeToWork = false;
 
-	public Worker() {
-		thread = new Thread();
-//		timeToWork = true;
-//		run();
+	public Worker(String name) {
+		timeToWork = true;
+		System.out.println("worker ready to run");
 	}
 	
 	public void startWork() {
 		timeToWork = true;
-		thread.start();
+		System.out.println("starting worker thread");
+		run();
 	}
 	
 	public void stopWork() {
@@ -36,7 +35,7 @@ public class Worker implements Runnable {
 	}
 
 	public Thread getThread() {
-		return thread;
+		return this;
 	}
 	
 	private void processOranges(Orange currentOrange) {
@@ -51,10 +50,12 @@ public class Worker implements Runnable {
 	
 	@Override
 	public void run() {
+		System.out.println("Worker is Working: " + currentThread().getName());
 		while ( timeToWork ) {//(System.currentTimeMillis() - Plant.startTime) < Plant.PROCESSING_TIME) {
 			Orange o = new Orange();
 			processOranges(o);
 			if (!Plant.orangeGoneBad) {
+				System.out.println(counter);
 				counter++;
 			}
 		}
